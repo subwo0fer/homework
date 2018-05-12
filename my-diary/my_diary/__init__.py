@@ -61,11 +61,6 @@ def action_delete_task():
         else:
             print('Не верно введен номер задачи')
 
-def action_test_id():
-    proverka = int(input())
-    with get_connection() as conn:
-        print(storage.test_id(conn))
-
 def action_show_menu():
 
     print('''
@@ -75,7 +70,6 @@ def action_show_menu():
 4. Завершить задачу
 5. Начать задачу сначала
 6. Удалить задачу
-7. Тест айди
 m. Показать меню
 q. Выйти
 ''')
@@ -98,7 +92,6 @@ def main():
         '4': action_end_task,
         '5': action_repeat_task,
         '6': action_delete_task,
-        '7': action_test_id,
         'm': action_show_menu,
         'q': action_exit,
     }
