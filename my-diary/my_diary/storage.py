@@ -10,10 +10,12 @@ SQL_SELECT_ALL = '''
         diary
 '''
 
+SQL_SELECT_ID = 'SELECT id FROM diary'
+
 SQL_SELECT_TASK_BY_PK = SQL_SELECT_ALL + ' WHERE id=?'
 
 SQL_EDIT_TASK = '''
-    UPDATE diary SET task=? WHERE id=?
+    UPDATE diary SET task=?, task_description=? WHERE id=?
 '''
 
 SQL_STATUS_DONE = '''
@@ -49,13 +51,12 @@ def add_task(conn, task, task_description, deadline):
         raise RuntimeError("Task can't be empty.")
     with conn:
         cursor = conn.execute(SQL_INSERT_TASK, (task, task_description, deadline))
-    #return task
 
-def edit_task(conn, edited_task, id):
+def edit_task(conn, edited_task, edited_task_description, id):
 
     with conn:
         cursor = conn.cursor()
-        cursor.execute(SQL_EDIT_TASK, (edited_task, id,))
+        cursor.execute(SQL_EDIT_TASK, (edited_task, edited_task_description, id,))
 
 
 
@@ -76,3 +77,12 @@ def delete_task(conn, id):
     with conn:
         cursor = conn.cursor()
         cursor.execute(SQL_DELETE_TASK, (id,))
+
+def test_id(conn):
+    with conn:
+        cursor = conn.execute(SQL_SELECT_ID)
+        all_ids = cursor.fetchall()
+        list_ids = []
+        for nomer in all_ids:
+            list_ids.append(nomer[0])
+        return list_ids
