@@ -14,7 +14,6 @@ def return_namedtuple(*args):
                 d = Na_tup(**dict)
                 return d
             else:
-                print('Вы передали в декоратор не кортеж')
                 return(func_result)
         return wrapper
     return decorator
