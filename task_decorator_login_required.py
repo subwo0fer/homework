@@ -26,16 +26,3 @@ def login_required(func):
         else:
             return None
     return wrapper
-
-
-@login_required
-def f1(a, b):
-    return a, b
-
-@login_required
-def f2(a, b):
-    return a, b
-
-
-print(f1(10, 20))
-print(f2(30, 40))
