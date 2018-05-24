@@ -53,59 +53,61 @@ class ParamHandler(metaclass=ABCMeta):
 
 class TextParamHandler(ParamHandler):
 
-    def read(self, file_path):
+    def read(self):
         """
         Чтение из текстового файла и присвоение значений в self.params
         """
-        with open(file_path) as f:
+        with open(self.source) as f:
             for line in f:
                 buf = line.split(':')
                 one_param_key, one_param_value = buf[0], buf[1].rstrip('\n')
                 self.params.update({one_param_key:one_param_value})
 
-    def write(self, file_path):
+    def write(self):
         """
         Запись в текстовый файл параметров self.params
         """
-        with open(file_path, 'w') as f:
+        with open(self.source, 'w') as f:
             for line in self.params:
                 f.write(str(line) + ':' + str(self.params.get(line)) + '\n')
 
 class PickleParamHandler(ParamHandler):
 
-    def read(self, file_path):
+    def read(self):
         """
         Чтение в формате Pickle и присвоение значений в self.params
         """
-        with open(file_path, 'rb') as f:
+        with open(self.source, 'rb') as f:
             readed_data = pickle.load(f)
             for line in readed_data:
                 self.params[line] = readed_data[line]
 
-    def write(self, file_path):
+    def write(self):
         """
         Запись в формате Pickle параметров self.params
         """
-        with open(file_path, 'wb') as f:
+        with open(self.source, 'wb') as f:
             pickle.dump(self.params, f)
 
 
 class JsonParamHandler(ParamHandler):
 
-    def read(self, file_path):
+    def read(self):
         """
         Чтение в формате Json и присвоение значений в self.params
         """
-        with open(file_path) as f:
+
+        with open(self.source) as f:
             readed_data = json.load(f)
             for line in readed_data:
                 self.params[line] = readed_data[line]
 
-    def write(self, file_path):
+    def write(self):
         """
         Запись в формате Json параметров self.params
         """
-        with open(file_path, 'w') as f:
+
+        with open(self.source, 'w') as f:
             json.dump(self.params, f)
 
 
@@ -117,12 +119,12 @@ if __name__ == '__main__':
     ParamHandler.add_type('pickle', PickleParamHandler)
     ParamHandler.add_type('json', JsonParamHandler)
 
-    obj_config = ParamHandler.get_instance('./config.txt')
+    obj_config = ParamHandler.get_instance('./config.json')
 
     obj_config.add_param('v', 'k')
-    obj_config.write('config.txt')
+    obj_config.write()
     print(obj_config.get_all_params())
 
-    obj_config.read('config.txt')
+    obj_config.read()
 
     print(obj_config.get_all_params())
