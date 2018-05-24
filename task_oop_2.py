@@ -119,7 +119,7 @@ if __name__ == '__main__':
     ParamHandler.add_type('pickle', PickleParamHandler)
     ParamHandler.add_type('json', JsonParamHandler)
 
-    obj_config = ParamHandler.get_instance('./config.json')
+    obj_config = ParamHandler.get_instance('./config.pickle')
 
     obj_config.add_param('v', 'k')
     obj_config.write()
