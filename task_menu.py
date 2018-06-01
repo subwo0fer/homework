@@ -62,21 +62,21 @@ class ShowCommand(Command):
         self.task_id = task_id
 
     def execute(self, task_id):
-        print('Выполнился показ задачи под номером {}'.format(self.task_id))
+        pass
 
 class ListCommand(Command):
     def __init__(self):
         pass
 
     def execute(self):
-        print('Выполнился показ всех задач')
+        pass
 
 class AddTaskCommand(Command):
     def __init__(self):
         pass
 
     def execute(self):
-        print('Выполнилось добавление задачи')
+        pass
 
 
 class EditTaskCommand(Command):
