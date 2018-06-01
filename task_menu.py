@@ -76,7 +76,7 @@ class AddTaskCommand(Command):
         pass
 
     def execute(self):
-        print('Выполнилось добавление команды')
+        print('Выполнилось добавление задачи')
 
 
 class EditTaskCommand(Command):
