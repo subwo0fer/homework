@@ -1,30 +1,24 @@
 from abc import ABCMeta, abstractmethod
 
 
-class Menu(object):
+class Menu(metaclass=ABCMeta):
 
     commands = {}
     counter = -1
 
-    def __init__(self):
-        pass
+    #def __init__(self):
+        #pass
 
 
 
-    def __iter__(self):
-        return self
+    def __iter__(cls):
+        return cls
 
     def __next__(cls):
-        commands_items = cls.commands.items()
-        commands_list = []
-        for command in commands_items:
-            commands_list.append(command)
 
-        if cls.counter < len(commands_list) - 1:
+        if cls.counter + 1 < len(list(cls.commands)):
             cls.counter += 1
-            return commands_list[cls.counter]
-
-
+            return (list(cls.commands)[cls.counter], cls.commands.get(list(cls.commands)[cls.counter]))
         else:
             raise StopIteration
 
@@ -42,13 +36,14 @@ class Menu(object):
 
         cls.commands[name] = klass
 
-
+    @classmethod
     def execute(cls, name, *args, **kwargs):
         if name not in cls.commands:
             raise CommandException(
                 'Command with name "{}" not found'.format(name)
             )
-        return cls.commands.get(name)(*args, **kwargs).execute(*args, **kwargs)
+        klass = cls.commands.get(name)
+        return klass(*args, **kwargs).execute()
 
 class Command(metaclass=ABCMeta):
 
@@ -58,25 +53,20 @@ class Command(metaclass=ABCMeta):
 
 
 class ShowCommand(Command):
-    def __init__(self, task_id):
-        self.task_id = task_id
 
-    def execute(self, task_id):
-        pass
+    def __init__(self, task_id, *args, **kwargs):
+        self.task_id = task_id
+        self.args = args
+        self.kwargs = kwargs
+    def execute(self):
+        pass #print(self.task_id, self.args, self.kwargs)
+
 
 class ListCommand(Command):
-    def __init__(self):
-        pass
-
-    def execute(self):
-        pass
+    pass
 
 class AddTaskCommand(Command):
-    def __init__(self):
-        pass
-
-    def execute(self):
-        pass
+    pass
 
 
 class EditTaskCommand(Command):
@@ -97,20 +87,23 @@ class CommandException(Exception):
 
 if __name__ == '__main__':
     menu = Menu()
-    print(menu)
+
     menu.add_command('show', ShowCommand)
     menu.add_command('list', ListCommand)
     menu.add_command('add_task', AddTaskCommand)
-    menu.execute('show', 1)
-    menu.execute('list')
-    menu.execute('add_task')
+    menu.execute('show', 1, 2, 3, 4, 5, ads='asd', sdfsd='asd')
+    #menu.execute('list')
+    #menu.execute('add_task')
 
     #menu.execute('unknown')
 
     #print(menu.__next__())
     #print(menu.__next__())
     #print(menu.__next__())
-    #print(menu.__next__())
+
+
+    #for item in menu:
+        #print(item)
 
     for name, command in menu:
         print(name, command)
