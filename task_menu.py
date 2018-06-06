@@ -3,28 +3,28 @@ from abc import ABCMeta, abstractmethod
 
 class Menu(metaclass=ABCMeta):
 
-    commands = {}
-    counter = -1
 
-    #def __init__(self):
-        #pass
+
+    def __init__(self):
+        self.commands = {}
+        self.counter = -1
 
 
 
     def __iter__(cls):
         return cls
 
-    def __next__(cls):
+    def __next__(self):
 
-        if cls.counter + 1 < len(list(cls.commands)):
-            cls.counter += 1
-            return (list(cls.commands)[cls.counter], cls.commands.get(list(cls.commands)[cls.counter]))
+        if self.counter + 1 < len(list(self.commands)):
+            self.counter += 1
+            return (list(self.commands)[self.counter], self.commands.get(list(self.commands)[self.counter]))
         else:
             raise StopIteration
 
 
-    @classmethod
-    def add_command(cls, name, klass):
+
+    def add_command(self, name, klass):
 
         if not name:
             raise CommandException('Command must have a name!')
@@ -34,15 +34,15 @@ class Menu(metaclass=ABCMeta):
                 'Class "{}" is not Command!'.format(klass)
             )
 
-        cls.commands[name] = klass
+        self.commands[name] = klass
 
-    @classmethod
-    def execute(cls, name, *args, **kwargs):
-        if name not in cls.commands:
+    
+    def execute(self, name, *args, **kwargs):
+        if name not in self.commands:
             raise CommandException(
                 'Command with name "{}" not found'.format(name)
             )
-        klass = cls.commands.get(name)
+        klass = self.commands.get(name)
         return klass(*args, **kwargs).execute()
 
 class Command(metaclass=ABCMeta):
