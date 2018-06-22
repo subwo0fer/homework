@@ -28,11 +28,12 @@ class Validator(metaclass=ABCMeta):
     @classmethod
     def get_instance(cls, name):
 
+
         klass = cls.types.get(name)
 
         if klass is None:
             raise ValidatorException(
-                'Type "{}" not found!'.format(ext)
+                'Validator with name "{}" not found'.format(name)
             )
 
         return klass(name)
@@ -96,10 +97,11 @@ class ValidatorException(Exception):
 
 
 
-if __name__ == '__main__':
-    Validator.add_type('email', EMailValidator)
-    Validator.add_type('datetime', DateTimeValidator)
 
+Validator.add_type('email', EMailValidator)
+Validator.add_type('datetime', DateTimeValidator)
+
+if __name__ == '__main__':
     valid = Validator.get_instance('datetime')
 
     print(valid.validate('12345-09-01'))
@@ -121,9 +123,9 @@ if __name__ == '__main__':
     print(valid.validate('dfgsdfg'))
     print(valid.validate('2017,09,01'))
 
-    valid_e = Validator.get_instance('email')
+    validator = Validator.get_instance('email')
     print('\n')
-    print(valid_e.validate('asdas@asdas.ru'))
-    print(valid_e.validate('asdfsdfsdaf'))
-    print(valid_e.validate('2423twe'))
-    print(valid_e.validate('info@itmo-it.org'))
+    print(validator.validate('asdas@asdas.ru'))
+    print(validator.validate('asdfsdfsdaf'))
+    print(validator.validate('2423twe'))
+    print(validator.validate('info@itmo-it.org'))
