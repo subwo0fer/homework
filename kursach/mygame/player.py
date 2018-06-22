@@ -1,10 +1,12 @@
 import pygame
 from settings import *
+from buildings import *
+from resources import *
 
 class Player(pygame.sprite.Sprite):
 
     def __init__(self):
-        super(Player, self).__init__()
+        super().__init__()
 
         self.image = pygame.image.load('pictures/player.jpg')
         self.rect = self.image.get_rect()
@@ -68,7 +70,6 @@ class Player(pygame.sprite.Sprite):
                     group_of_resource.remove(res)
 
     def sort_inventory(self):
-
         for i, item in enumerate(self.inventory):
             item.rect.centery = 670
 
@@ -76,6 +77,49 @@ class Player(pygame.sprite.Sprite):
 
     def show_inventory(self):
         return self.inventory
+
+    def build_some(self, what_to_build, where, buildings):
+
+        if type(what_to_build) == Wall:
+            bufer = 0
+            bufer_del = 2
+            for item in self.inventory:
+                if type(item) == Rock:
+                    bufer += 1
+            if bufer >= 2:
+                buildings.add(Wall(where[0], where[1] + 17))
+
+                for item in self.inventory:
+                    if type(item) == Rock and bufer_del > 0:
+                        self.inventory.remove(item)
+                        bufer_del -= 1
+
+
+
+        if type(what_to_build) == Fire:
+            count_woods = 0
+            count_flints = 0
+            count_del_woods = 3
+            count_del_flints = 1
+
+            for item in self.inventory:
+                if type(item) == Wood:
+                    count_woods += 1
+                if type(item) == Flint:
+                    count_flints += 1
+
+            if count_woods >= 2 and count_flints >= 1:
+                buildings.add(Fire(where[0], where[1] + 17))
+
+                for item in self.inventory:
+                    if type(item) == Wood and count_del_woods > 0:
+                        self.inventory.remove(item)
+                        count_del_woods -= 1
+
+                    if type(item) == Flint and count_del_flints > 0:
+                        self.inventory.remove(item)
+                        count_del_flints -= 1
+
 
 
 
@@ -85,7 +129,7 @@ class Player(pygame.sprite.Sprite):
 class Inventory(pygame.sprite.Sprite):
 
     def __init__(self):
-        super(Inventory, self).__init__()
+        super().__init__()
 
         self.image = pygame.Surface((340, 34))
         self.image.fill(BLUE)
