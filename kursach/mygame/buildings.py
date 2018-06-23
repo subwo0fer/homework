@@ -19,9 +19,8 @@ class Fire(pygame.sprite.Sprite):
     def __init__(self, cent, bott):
         super().__init__()
 
-        self.image = pygame.image.load('pictures/fire.jpg')
+        self.image = pygame.image.load('pictures/fire(1).png')
         self.rect = self.image.get_rect()
 
         self.rect.centerx = cent
         self.rect.bottom = bott
-

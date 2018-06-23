@@ -14,15 +14,17 @@ class Player(pygame.sprite.Sprite):
         self.rect.centerx = WIDTH / 2
         self.rect.bottom = HEIGHT / 2
 
-        self.max_hor_speed = 5
-        self.max_ver_speed = 5
+        self.max_hor_speed = 10
+        self.max_ver_speed = 10
         self.current_hor_speed = 0
         self.current_ver_speed = 0
 
         self.inventory = pygame.sprite.Group()
 
-    def update(self):
+    def update(self, *args):
+
         keys = pygame.key.get_pressed()
+
 
         if keys[pygame.K_LEFT]:
             self.current_hor_speed = -self.max_hor_speed
@@ -36,28 +38,82 @@ class Player(pygame.sprite.Sprite):
         else:
             self.current_hor_speed = self.current_ver_speed = 0
 
-        self.rect.move_ip((self.current_hor_speed, 0))
-        self.rect.move_ip((0, self.current_ver_speed))
+        if self.current_hor_speed > 0:
+            if self.rect.right > WORLD_H - 10:
+                self.current_hor_speed = 0
+
+        if self.current_hor_speed < 0:
+            if self.rect.left < 0:
+                self.current_hor_speed = 0
+
+        if self.current_ver_speed > 0:
+            if self.rect.bottom > WORLD_W - 10:
+                self.current_ver_speed = 0
+
+        if self.current_ver_speed < 0:
+            if self.rect.top < 0:
+                self.current_ver_speed = 0
+
+        for group_of_resource in args:
+            for res in group_of_resource:
+                pass
+
+
+
+
+
+
+
+
+
+        self.rect.move_ip((self.current_hor_speed, self.current_ver_speed))
+        #self.rect.move_ip((0, self.current_ver_speed))
+
+
+
 
     def collide(self, group_of_resource):
         for res in group_of_resource:
             if pygame.sprite.collide_rect(self, res):
 
+
+                if self.current_hor_speed > 0 and self.current_ver_speed < 0:
+                    self.rect.top = res.rect.bottom
+                    return
+                    # ВВЕРХ И ВПРАВО
+
+                if self.current_hor_speed < 0 and self.current_ver_speed < 0:
+                    self.rect.top = res.rect.bottom
+                    return
+                    # ВВЕРХ И ВЛЕВО
+
+                if self.current_hor_speed > 0 and self.current_ver_speed > 0:
+                    self.rect.bottom = res.rect.top
+                    return
+                    # ВНИЗ И ВПРАВО
+
+                if self.current_hor_speed < 0 and self.current_ver_speed > 0:
+                    self.rect.bottom = res.rect.top
+                    return
+                    # ВНИЗ И ВЛЕВО
+
+
+
                 if self.current_hor_speed > 0:
                     self.rect.right = res.rect.left
-                    #self.current_hor_speed = self.current_ver_speed = 0
+
 
                 if self.current_hor_speed < 0:
                     self.rect.left = res.rect.right
-                    #self.current_hor_speed = self.current_ver_speed = 0
+
 
                 if self.current_ver_speed < 0:
                     self.rect.top = res.rect.bottom
-                    #self.current_hor_speed = self.current_ver_speed = 0
+
 
                 if self.current_ver_speed > 0:
                     self.rect.bottom = res.rect.top
-                    #self.current_hor_speed = self.current_ver_speed = 0
+
 
     def gather_resource(self, group_of_resource):
 
@@ -66,8 +122,11 @@ class Player(pygame.sprite.Sprite):
                 keys = pygame.key.get_pressed()
 
                 if keys[pygame.K_q]:
-                    self.inventory.add(res)
-                    group_of_resource.remove(res)
+                    if len(self.inventory) < 18:
+                        self.inventory.add(res)
+                        group_of_resource.remove(res)
+                    else:
+                        print('ИНВЕНТАРЬ ПОЛОН')
 
     def sort_inventory(self):
         for i, item in enumerate(self.inventory):
