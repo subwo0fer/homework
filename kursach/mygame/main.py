@@ -8,9 +8,11 @@ from background import Background
 from resources import Wood, Rock, Flint
 from menu import *
 from camera import *
-
+from enemies import Ghost
+import datetime
 
 pygame.init()
+pygame.mixer.init()
 pygame.display.set_caption('MyBeautyGame')
 
 screen = pygame.display.set_mode(SIZE)
@@ -18,21 +20,26 @@ clock = pygame.time.Clock()
 
 # Objects
 player = Player()
-background = Background()
+#background = Background()
 
 # Groups
 woods = pygame.sprite.Group()
 rocks = pygame.sprite.Group()
 flints = pygame.sprite.Group()
 buildings = pygame.sprite.Group()
-
-
-
-# fill objects
-
-
+background_day = pygame.sprite.Group()
+background_night = pygame.sprite.Group()
+enemies = pygame.sprite.Group()
 
 # fill groups
+for i in range(1, 5):
+    for j in range(4):
+        background_day.add(Background(i * 1000, j * 1000, 'pictures/background (1).png'))
+
+for i in range(1, 5):
+    for j in range(4):
+        background_night.add(Background(i * 1000, j * 1000, 'pictures/background_night.png'))
+
 for i in range(10):
     woods.add(Wood())
 
@@ -42,8 +49,11 @@ for i in range(10):
 for i in range(10):
     flints.add(Flint())
 
+for i in range(30):
+    enemies.add(Ghost())
+
 # camera
-camera = Camera(camera_configure, WORLD_W, WORLD_H)
+camera = Camera(WORLD_W, WORLD_H)
 
 # Menu
 show_inventory = ShowInventoryCommand(player, screen)
@@ -51,7 +61,7 @@ show_buildings_menu = ShowBuildingsMenuCommand(screen)
 
 
 def main():
-    asd = None
+    what_to_build_now = None
     mouse_point = (0, 0)
     mouse_point_in_world = [0, 0]
     inventory_bool = False
@@ -76,32 +86,35 @@ def main():
                 else:
                     build_bool = False
 
-
+        if pygame.time.get_ticks() // 1000 // 15 % 2 == 0:
+            day = True
+        else:
+            day = False
 
         screen.fill(GREEN)
 
-        player.update(woods, rocks, flints, buildings)
-
+        player.update()
 
         player.collide(woods)
         player.collide(rocks)
         player.collide(flints)
         player.collide(buildings)
-        
+
 
         player.gather_resource(woods)
         player.gather_resource(rocks)
         player.gather_resource(flints)
 
-        """
-        pygame.sprite.spritecollideany(player, woods)
-        pygame.sprite.spritecollideany(player, rocks)
-        pygame.sprite.spritecollideany(player, flints)
-        pygame.sprite.spritecollideany(player, buildings)
-        """
-
         camera.update(player)
-        screen.blit(background.image, camera.apply(background))
+
+        if day:
+            for back in background_day:
+                screen.blit(back.image, camera.apply(back))
+        else:
+            for back in background_night:
+                screen.blit(back.image, camera.apply(back))
+
+        #screen.blit(background.image, camera.apply(background))
         screen.blit(player.image, camera.apply(player))
 
         for w in woods:
@@ -113,9 +126,17 @@ def main():
         for b in buildings:
             screen.blit(b.image, camera.apply(b))
 
-        #rocks.draw(screen)
-        #flints.draw(screen)
-        #buildings.draw(screen)
+        if not day:
+            for b in buildings:
+                b.update()
+                for enemy in enemies:
+                    enemy.attack(b)
+
+            for enemy in enemies:
+                screen.blit(enemy.image, camera.apply(enemy))
+                enemy.attack(player)
+                enemy.update(player)
+                enemy.collide(buildings)
 
         if inventory_bool:
             screen.blit(show_inventory.image, show_inventory.rect)
@@ -127,24 +148,17 @@ def main():
                 screen.blit(item.image, item.rect)
             what_to_build = show_buildings_menu.execute(mouse_point)
 
-
         if what_to_build:
-            asd = what_to_build
-
-
+            what_to_build_now = what_to_build
 
         if mouse_point_in_world[0] in range(player.rect[0] - 100, player.rect[0] + 100):
             if mouse_point_in_world[1] in range(player.rect[1] - 100, player.rect[1] + 100):
-                player.build_some(asd, mouse_point_in_world, buildings)
-                #print('Сработала постройка')
-                asd = None
+                player.build_some(what_to_build_now, mouse_point_in_world, buildings)
+                what_to_build_now = None
 
-
-
-
-
-
+        print(player.health)
         pygame.display.flip()
         clock.tick(30)
+
 
 main()
