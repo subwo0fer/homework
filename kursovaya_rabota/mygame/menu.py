@@ -1,37 +1,10 @@
 from abc import ABCMeta, abstractmethod
 import pygame
 import time
-from buildings import *
-from settings import *
+from buildings import Wall, Fire
+from settings import HEIGHT, WIDTH
 
-"""
-class ShowInventoryCommand(object):
-
-    def __init__(self, player, screen):
-        self.player = player
-        self.screen = screen
-        self.drawing = False
-
-    def execute(self):
-        keys = pygame.key.get_pressed()
-
-        if keys[pygame.K_i]:
-            if self.drawing == False:
-                self.drawing = True
-                time.sleep(0.5)
-
-            else:
-                self.drawing = False
-                time.sleep(0.5)
-
-        if self.drawing:
-
-            self.player.sort_inventory()
-            self.player.show_inventory().draw(self.screen)
-
-"""
-
-class ShowInventoryCommand(pygame.sprite.Sprite):
+class Inventory(pygame.sprite.Sprite):
 
     def __init__(self, player, screen):
         super().__init__()
@@ -65,10 +38,7 @@ class ShowInventoryCommand(pygame.sprite.Sprite):
                 k += 1
 
 
-
-
-class ShowBuildingsMenuCommand(object):
-
+class BuildingMenu(object):
 
     def __init__(self, screen):
         self.screen = screen

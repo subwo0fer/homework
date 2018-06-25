@@ -1,12 +1,10 @@
 import pygame
-from settings import *
-from pygame import *
-
+from settings import WIDTH, HEIGHT
 
 class Camera(object):
-    
+
     def __init__(self, width, height):
-        self.state = Rect(0, 0, width, height)
+        self.state = pygame.Rect(0, 0, width, height)
 
     def apply(self, target):
         return target.rect.move(self.state.topleft)
@@ -24,4 +22,4 @@ class Camera(object):
         t = max( - (camera.height - HEIGHT), t)
         t = min(0, t)
 
-        return Rect(l, t, w, h)
+        return pygame.Rect(l, t, w, h)

@@ -1,14 +1,14 @@
 import pygame
-from settings import *
+from settings import WORLD_H, WORLD_W
 import random
 
-class Ghost(pygame.sprite.Sprite):
+class Enemy(pygame.sprite.Sprite):
 
     def __init__(self):
 
         super().__init__()
 
-        self.image = pygame.image.load('pictures/ghost.png')
+        self.image = pygame.Surface((34, 34))
         self.rect = self.image.get_rect()
 
         self.rect.centerx = random.randint(1, WORLD_H)
@@ -18,6 +18,8 @@ class Ghost(pygame.sprite.Sprite):
         self.max_ver_speed = 3
         self.current_hor_speed = 0
         self.current_ver_speed = 0
+
+        self.damage = 3
 
         self.attack_sound = pygame.mixer.Sound('sounds/ghost_attack.ogg')
 
@@ -77,5 +79,18 @@ class Ghost(pygame.sprite.Sprite):
         if now - self.last >= self.cooldown_attack:
             self.last = now
             if pygame.sprite.collide_circle(self, what_to_attack):
-                what_to_attack.health -= 5
+                what_to_attack.health -= self.damage
                 self.attack_sound.play()
+
+
+class Ghost(Enemy):
+    def __init__(self):
+        super().__init__()
+        self.image = pygame.image.load('pictures/ghost.png')
+
+class Wolf(Enemy):
+    def __init__(self):
+        super().__init__()
+        self.image = pygame.image.load('pictures/wolf.png')
+
+        self.damage = 10

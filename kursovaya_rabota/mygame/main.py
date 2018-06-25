@@ -1,14 +1,13 @@
 import pygame
 import sys
 
-#from pygame import *
-from settings import *
+from settings import SIZE, WORLD_H, WORLD_W, GREEN
 from player import Player
 from background import Background
 from resources import Wood, Rock, Flint
-from menu import *
+from menu import Inventory, BuildingMenu
 from camera import Camera
-from enemies import Ghost
+from enemies import Ghost, Wolf
 
 pygame.init()
 pygame.mixer.init()
@@ -32,30 +31,32 @@ enemies = pygame.sprite.Group()
 # fill groups
 for i in range(1, 5):
     for j in range(4):
-        background_day.add(Background(i * 1000, j * 1000, 'pictures/background (1).png'))
+        background_day.add(Background(i * 1000, j * 1000, 'pictures/background.png'))
 
 for i in range(1, 5):
     for j in range(4):
         background_night.add(Background(i * 1000, j * 1000, 'pictures/background_night.png'))
 
-for i in range(10):
+for i in range(30):
     woods.add(Wood())
 
-for i in range(10):
+for i in range(30):
     rocks.add(Rock())
 
-for i in range(10):
+for i in range(30):
     flints.add(Flint())
 
-for i in range(30):
+for i in range(15):
     enemies.add(Ghost())
+    enemies.add(Wolf())
+
 
 # camera
 camera = Camera(WORLD_W, WORLD_H)
 
 # Menu
-show_inventory = ShowInventoryCommand(player, screen)
-show_buildings_menu = ShowBuildingsMenuCommand(screen)
+inventory = Inventory(player, screen)
+building_menu = BuildingMenu(screen)
 
 
 def main():
@@ -137,14 +138,14 @@ def main():
                 enemy.collide(buildings)
 
         if inventory_bool:
-            screen.blit(show_inventory.image, show_inventory.rect)
-            show_inventory.fill()
-            show_inventory.inv.draw(screen)
+            screen.blit(inventory.image, inventory.rect)
+            inventory.fill()
+            inventory.inv.draw(screen)
 
         if build_bool:
-            for item in show_buildings_menu.buildings:
+            for item in building_menu.buildings:
                 screen.blit(item.image, item.rect)
-            what_to_build = show_buildings_menu.execute(mouse_point)
+            what_to_build = building_menu.execute(mouse_point)
 
         if what_to_build:
             what_to_build_now = what_to_build

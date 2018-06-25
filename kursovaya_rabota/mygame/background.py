@@ -1,9 +1,8 @@
 import pygame
-from settings import *
 
 class Background(pygame.sprite.Sprite):
 
-    def __init__(self, bottom, right, pic_time_of_date):
+    def __init__(self, bottom, left, pic_time_of_date):
 
         super().__init__()
 
@@ -11,4 +10,4 @@ class Background(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
 
         self.rect.bottom = bottom
-        self.rect.left = right
+        self.rect.left = left
