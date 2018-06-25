@@ -1,9 +1,13 @@
 import pygame
-from settings import *
-from buildings import *
-from resources import *
 import pyganim
 import sys
+
+from settings import (COLOR, WORLD_H, WORLD_W, ANIMATION_DELAY, ANIMATION_DOWN,
+                      ANIMATION_UP, ANIMATION_LEFT, ANIMATION_RIGHT,
+                      ANIMATION_STAY)
+from buildings import Wall, Fire
+from resources import Flint, Rock, Wood
+
 
 class Player(pygame.sprite.Sprite):
 
@@ -25,6 +29,9 @@ class Player(pygame.sprite.Sprite):
         self.max_ver_speed = 5
         self.current_hor_speed = 0
         self.current_ver_speed = 0
+
+        self.last = pygame.time.get_ticks()
+        self.cooldown = 1000
 
         self.health = 100
 
@@ -173,17 +180,21 @@ class Player(pygame.sprite.Sprite):
 
 
     def gather_resource(self, group_of_resource):
+        now = pygame.time.get_ticks()
 
-        for res in group_of_resource:
-            if pygame.sprite.collide_circle(self, res):
-                keys = pygame.key.get_pressed()
+        if now - self.last >= self.cooldown:
 
-                if keys[pygame.K_q]:
-                    if len(self.inventory) < 18:
-                        self.inventory.add(res)
-                        group_of_resource.remove(res)
-                    else:
-                        print('ИНВЕНТАРЬ ПОЛОН')
+            for res in group_of_resource:
+                if pygame.sprite.collide_circle(self, res):
+                    self.last = now
+                    keys = pygame.key.get_pressed()
+
+                    if keys[pygame.K_q]:
+                        if len(self.inventory) < 18:
+                            self.inventory.add(res)
+                            group_of_resource.remove(res)
+                        else:
+                            print('ИНВЕНТАРЬ ПОЛОН')
 
     def sort_inventory(self):
         for i, item in enumerate(self.inventory):
@@ -195,6 +206,35 @@ class Player(pygame.sprite.Sprite):
         return self.inventory
 
     def build_some(self, what_to_build, where, buildings):
+
+        """
+        needed = {}
+        builded = False
+        if what_to_build:
+            req = what_to_build.requirenments
+            for resource in req:
+                needed[resource] = 0
+                for item in self.inventory:
+                    if type(item) == resource:
+                            needed[resource] = needed[resource] + 1
+                            print(needed)
+
+            for res in req:
+                for ex_res in needed:
+                    if ex_res == res:
+                        if needed[ex_res] >= req[res]:
+                            print(ex_res, needed[ex_res], res, req[res])
+                            buildings.add(type(what_to_build)(where[0], where[1] + 17))
+                            builded = True
+
+            if builded:
+                for res in what_to_build.requirenments:
+                    bufer = what_to_build.requirenments[res]
+                    for i in range(what_to_build.requirenments[res]):
+                        for item in self.inventory:
+                            if type(item) == res:
+                                self.inventory.remove(item)
+        """
 
         if type(what_to_build) == Wall:
             bufer = 0
@@ -235,7 +275,6 @@ class Player(pygame.sprite.Sprite):
                     if type(item) == Flint and count_del_flints > 0:
                         self.inventory.remove(item)
                         count_del_flints -= 1
-
 
 
 

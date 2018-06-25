@@ -77,8 +77,8 @@ class Enemy(pygame.sprite.Sprite):
         now = pygame.time.get_ticks()
 
         if now - self.last >= self.cooldown_attack:
-            self.last = now
             if pygame.sprite.collide_circle(self, what_to_attack):
+                self.last = now
                 what_to_attack.health -= self.damage
                 self.attack_sound.play()
 
@@ -87,10 +87,13 @@ class Ghost(Enemy):
     def __init__(self):
         super().__init__()
         self.image = pygame.image.load('pictures/ghost.png')
+        self.last = pygame.time.get_ticks()
+
 
 class Wolf(Enemy):
     def __init__(self):
         super().__init__()
         self.image = pygame.image.load('pictures/wolf.png')
+        self.last = pygame.time.get_ticks()
 
         self.damage = 10

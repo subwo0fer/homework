@@ -1,4 +1,5 @@
 import pygame
+from resources import Flint, Wood, Rock
 
 class Building(pygame.sprite.Sprite):
     def __init__(self):
@@ -23,6 +24,8 @@ class Wall(Building):
         self.rect.centerx = cent
         self.rect.bottom = bott
 
+        self.requirenments = {Rock: 2}
+
 class Fire(Building):
     def __init__(self, cent, bott):
         super().__init__()
@@ -34,3 +37,5 @@ class Fire(Building):
         self.rect.bottom = bott
 
         self.health = 20
+
+        self.requirenments = {Wood: 3, Flint: 1}
